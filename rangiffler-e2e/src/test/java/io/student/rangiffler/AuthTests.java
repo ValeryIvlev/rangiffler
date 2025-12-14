@@ -1,0 +1,83 @@
+package io.student.rangiffler;
+
+import com.github.javafaker.Faker;
+import io.student.rangiffler.config.Config;
+import io.student.rangiffler.jupiter.User;
+import io.student.rangiffler.jupiter.UserExtension;
+import io.student.rangiffler.model.UserJson;
+import io.student.rangiffler.page.AuthChoicePage;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static com.codeborne.selenide.Selenide.*;
+import static io.student.rangiffler.data.UserData.STANDART_PASSWORD;
+
+@ExtendWith(UserExtension.class)
+public class AuthTests {
+
+    private static final Config CFG = Config.getInstance();
+    private static final Faker faker = new Faker();
+
+    @AfterEach
+    public void afterEach(){
+        clearBrowserLocalStorage();
+        clearBrowserCookies();
+        closeWebDriver();
+
+    }
+
+    @Test
+    @DisplayName("Регистрация нового пользователя с валидными данными")
+    public void shouldRegisterNewUser() {
+        String userName = faker.name().username();
+        String password = faker.internet().password();
+        open(CFG.frontUrl(), AuthChoicePage.class)
+                .clickRegister()
+                .registerUser(userName, password)
+                .checkRegistrationResult()
+                .successRegisterBtnClick()
+                .clickLogin()
+                .login(userName, password)
+                .shouldBeVisibleMap();
+    }
+
+    @User
+    @Test
+    @DisplayName("Регистрация не должна проходить, если пользователь с таким логином уже существует")
+    public void shouldNotRegisterUserWithExistingUsername(UserJson userJson) {
+        open(CFG.frontUrl(), AuthChoicePage.class)
+                .clickRegister()
+                .registerUser(userJson.data().user().username(), STANDART_PASSWORD)
+                .checkRegistrationResultNotSuccessMessage();
+    }
+
+    @Test
+    @DisplayName("Отображается ошибка, если пароль и подтверждение пароля не совпадают")
+    public void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
+        String userName = faker.name().username();
+        String password = faker.internet().password();
+        open(CFG.frontUrl(), AuthChoicePage.class)
+                .clickRegister()
+                .registerUser(userName, password, STANDART_PASSWORD)
+                .checkRegistrationFailPasswordsNotEqual();
+    }
+
+    @User
+    @Test
+    @DisplayName("После успешного логина отображается главная страница")
+    public void mainPageShouldBeDisplayedAfterSuccessLogin(UserJson userJson) {
+        open(CFG.frontUrl(), AuthChoicePage.class)
+                .clickLogin()
+                .login(userJson.data().user().username(), STANDART_PASSWORD)
+                .shouldBeVisibleMap();
+    }
+
+    @Test
+    @DisplayName("При вводе неверных учетных данных пользователь остается на странице логина")
+    public void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
+        open(CFG.frontUrl(), AuthChoicePage.class)
+                .clickLogin()
+                .login(faker.name().username(), faker.internet().password())
+                .shouldNotVisibleMap();
+    }
+}
