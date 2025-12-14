@@ -20,13 +20,19 @@ public class UserDbClient implements UsersClient{
     private static final Config CFG = Config.getInstance();
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    private final String SQL_CREATE =
+    private final String SQL_CREATE_USER =
             """
                   INSERT INTO `rangiffler-auth`.`user`
                    (id, username,password,enabled,account_non_expired,account_non_locked,credentials_non_expired)  
                    VALUES (UUID_TO_BIN(?, true),?,?,?,?,?,?);
             """;
 
+    private final String SQL_CREATE_AUTHORITY =
+            """
+                    INSERT INTO `rangiffler-auth`.authority 
+                    (id, user_id, authority)
+                    VALUES (UUID_TO_BIN(?, true),UUID_TO_BIN(?, true),?);
+            """;
 
     @Override
     public UserJson createUser(String userName, String password) {
@@ -34,7 +40,7 @@ public class UserDbClient implements UsersClient{
         try {
             final JdbcTemplate jdbcTemplate = new JdbcTemplate(new SingleConnectionDataSource(
                     DriverManager.getConnection(
-                            CFG.spendJdbcUrl(),
+                            CFG.authJdbcUrl(),
                             CFG.dbUsername(),
                             CFG.dbPassword()
                     ),
@@ -42,38 +48,61 @@ public class UserDbClient implements UsersClient{
             );
 
             final String userId = UUID.randomUUID().toString();
-            jdbcTemplate.update(
-                    (conn) -> {
-                        PreparedStatement ps = conn.prepareStatement(
-                                SQL_CREATE,
-                                Statement.RETURN_GENERATED_KEYS
-                        );
-                        ps.setString(1, userId);
-                        ps.setString(2, userName);
-                        ps.setString(3, passwordEncoder.encode(password));
-                        ps.setBoolean(4, true);
-                        ps.setBoolean(5, true);
-                        ps.setBoolean(6, true);
-                        ps.setBoolean(7, true);
+            insertUser(jdbcTemplate, userId, userName, password);
+            insertAuthorities(jdbcTemplate, userId, Authority.read, Authority.write);
 
-                        return ps;
-                    }
-            );
+            return buildUserJson(userId, userName);
 
-            return new UserJson(
-                    new UserJson.Data(
-                            new UserJson.User(
-                                    userId,
-                                    userName,
-                                    null,
-                                    null,
-                                    null,
-                                    null
-                            )
-                    )
-            );
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void insertUser(
+            JdbcTemplate jdbcTemplate,
+            String userId,
+            String userName,
+            String password
+    ) {
+        jdbcTemplate.update(
+                SQL_CREATE_USER,
+                userId,
+                userName,
+                passwordEncoder.encode(password),
+                true,
+                true,
+                true,
+                true
+        );
+    }
+
+    private void insertAuthorities(
+            JdbcTemplate jdbcTemplate,
+            String userId,
+            Authority... authorities
+    ) {
+        for (Authority authority : authorities) {
+            jdbcTemplate.update(
+                    SQL_CREATE_AUTHORITY,
+                    UUID.randomUUID().toString(),
+                    userId,
+                    authority.toString()
+            );
+        }
+    }
+
+    private UserJson buildUserJson(String userId, String userName) {
+        return new UserJson(
+                new UserJson.Data(
+                        new UserJson.User(
+                                userId,
+                                userName,
+                                null,
+                                null,
+                                null,
+                                null
+                        )
+                )
+        );
     }
 }

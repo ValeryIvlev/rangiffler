@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RegistrationResult {
     SUCCESS("Congratulations! You've registered!"),
-    NOT_SUCCESS("not");
+    PASSWORD_NOT_EQUAL("Passwords should be equal");
 
     private final String text;
 }
