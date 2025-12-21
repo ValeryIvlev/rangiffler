@@ -6,6 +6,7 @@ import io.student.rangiffler.jupiter.User;
 import io.student.rangiffler.jupiter.UserExtension;
 import io.student.rangiffler.model.UserJson;
 import io.student.rangiffler.page.AuthChoicePage;
+import io.student.rangiffler.page.RegistrationResult;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -19,7 +20,7 @@ public class AuthTests {
     private static final Faker faker = new Faker();
 
     @AfterEach
-    public void afterEach(){
+    public void afterEach() {
         clearBrowserLocalStorage();
         clearBrowserCookies();
         closeWebDriver();
@@ -33,7 +34,7 @@ public class AuthTests {
         String password = faker.internet().password();
         open(CFG.frontUrl(), AuthChoicePage.class)
                 .clickRegister()
-                .registerUser(userName, password)
+                .registerUser(userName, password, password)
                 .checkRegistrationResult()
                 .successRegisterBtnClick()
                 .clickLogin()
@@ -47,7 +48,7 @@ public class AuthTests {
     public void shouldNotRegisterUserWithExistingUsername(UserJson userJson) {
         open(CFG.frontUrl(), AuthChoicePage.class)
                 .clickRegister()
-                .registerUser(userJson.data().user().username(), STANDART_PASSWORD)
+                .registerUser(userJson.data().user().username(), STANDART_PASSWORD, STANDART_PASSWORD)
                 .checkRegistrationResultNotSuccessMessage();
     }
 
@@ -59,7 +60,7 @@ public class AuthTests {
         open(CFG.frontUrl(), AuthChoicePage.class)
                 .clickRegister()
                 .registerUser(userName, password, STANDART_PASSWORD)
-                .checkRegistrationFailPasswordsNotEqual();
+                .checkRegistrationFail(RegistrationResult.PASSWORD_NOT_EQUAL);
     }
 
     @User

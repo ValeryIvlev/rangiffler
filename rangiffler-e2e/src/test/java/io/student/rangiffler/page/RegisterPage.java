@@ -19,13 +19,6 @@ public class RegisterPage {
     private final ElementsCollection labelForms = $$(".form__label");
     private final SelenideElement labelPasswordForm = labelForms.find(text("Password"));
 
-    public RegisterPage registerUser(String userName, String password){
-        usernameInput.sendKeys(userName);
-        passwordInput.sendKeys(password);
-        passwordSubmitInput.sendKeys(password);
-        submitBtn.click();
-        return this;
-    }
 
     public RegisterPage registerUser(String userName, String password, String passwordSubmit){
         usernameInput.sendKeys(userName);
@@ -50,8 +43,8 @@ public class RegisterPage {
         return this;
     }
 
-    public RegisterPage checkRegistrationFailPasswordsNotEqual(){
-        labelPasswordForm.shouldHave(text("Passwords should be equal"));
+    public RegisterPage checkRegistrationFail(RegistrationResult registrationResult){
+        labelPasswordForm.shouldHave(text(registrationResult.getText()));
         return this;
     }
 }
