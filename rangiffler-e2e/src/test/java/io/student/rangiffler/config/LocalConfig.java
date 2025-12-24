@@ -23,4 +23,9 @@ public enum LocalConfig implements Config {
   public String dbPassword() {
     return "secret";
   }
+
+  @Override
+  public String ghUrl() {
+    return "http://api.github.com/";
+  }
 }

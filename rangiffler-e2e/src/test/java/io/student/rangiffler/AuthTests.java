@@ -2,8 +2,8 @@ package io.student.rangiffler;
 
 import com.github.javafaker.Faker;
 import io.student.rangiffler.config.Config;
-import io.student.rangiffler.jupiter.User;
-import io.student.rangiffler.jupiter.UserExtension;
+import io.student.rangiffler.jupiter.annotation.User;
+import io.student.rangiffler.jupiter.extension.UserExtension;
 import io.student.rangiffler.model.UserJson;
 import io.student.rangiffler.page.AuthChoicePage;
 import io.student.rangiffler.page.RegistrationResult;
