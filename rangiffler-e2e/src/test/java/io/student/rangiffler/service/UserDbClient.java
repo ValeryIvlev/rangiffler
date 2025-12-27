@@ -4,18 +4,14 @@ import io.student.rangiffler.config.Config;
 import io.student.rangiffler.model.UserJson;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.UUID;
 
-public class UserDbClient implements UsersClient{
+public class UserDbClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -33,6 +29,41 @@ public class UserDbClient implements UsersClient{
                     (id, user_id, authority)
                     VALUES (UUID_TO_BIN(?, true),UUID_TO_BIN(?, true),?);
             """;
+
+    private final String SQL_DELETE_USER_BY_USERNAME =
+            """
+                DELETE FROM `rangiffler-auth`.`user`
+                WHERE username = ?;
+            """;
+
+    private final String SQL_DELETE_AUTHORITIES_BY_USERNAME =
+            """
+                DELETE a FROM `rangiffler-auth`.authority a
+                JOIN `rangiffler-auth`.user u ON a.user_id = u.id
+                WHERE u.username = ?;
+            """;
+
+    @Override
+    public void deleteUserByUsername(String username) {
+
+        try {
+            final JdbcTemplate jdbcTemplate = new JdbcTemplate(
+                    new SingleConnectionDataSource(
+                            DriverManager.getConnection(
+                                    CFG.authJdbcUrl(),
+                                    CFG.dbUsername(),
+                                    CFG.dbPassword()
+                            ),
+                            true
+                    )
+            );
+            jdbcTemplate.update(SQL_DELETE_AUTHORITIES_BY_USERNAME, username);
+            jdbcTemplate.update(SQL_DELETE_USER_BY_USERNAME, username);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public UserJson createUser(String userName, String password) {

@@ -20,7 +20,7 @@ public class RegisterPage {
     private final SelenideElement labelPasswordForm = labelForms.find(text("Password"));
 
 
-    public RegisterPage registerUser(String userName, String password, String passwordSubmit){
+    public RegisterPage registerUser(String userName, String password, String passwordSubmit) {
         usernameInput.sendKeys(userName);
         passwordInput.sendKeys(password);
         passwordSubmitInput.sendKeys(passwordSubmit);
@@ -28,22 +28,22 @@ public class RegisterPage {
         return this;
     }
 
-    public AuthChoicePage successRegisterBtnClick(){
+    public AuthChoicePage successRegisterBtnClick() {
         successRegisterBtn.click();
         return Selenide.page(AuthChoicePage.class);
     }
 
-    public RegisterPage checkRegistrationResult(){
+    public RegisterPage checkRegistrationResult() {
         resultRegistrationForm.shouldHave(text(RegistrationResult.SUCCESS.getText()));
         return this;
     }
 
-    public RegisterPage checkRegistrationResultNotSuccessMessage(){
+    public RegisterPage checkRegistrationResultNotSuccessMessage() {
         resultRegistrationForm.shouldNotHave(text(RegistrationResult.SUCCESS.getText()));
         return this;
     }
 
-    public RegisterPage checkRegistrationFail(RegistrationResult registrationResult){
+    public RegisterPage checkRegistrationFail(RegistrationResult registrationResult) {
         labelPasswordForm.shouldHave(text(registrationResult.getText()));
         return this;
     }

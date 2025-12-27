@@ -8,4 +8,5 @@ public interface Config {
     String authJdbcUrl();
     String dbUsername();
     String dbPassword();
+    String ghUrl();
 }
