@@ -3,9 +3,10 @@ package io.student.rangiffler.model;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Photo {
-  private String id;
+  private UUID id;
 
   private String src;
 
@@ -22,7 +23,7 @@ public class Photo {
   public Photo() {
   }
 
-  public Photo(String id, String src, Country country, String description, Date creationDate,
+  public Photo(UUID id, String src, Country country, String description, Date creationDate,
                Likes likes, boolean isOwner) {
     this.id = id;
     this.src = src;
@@ -33,11 +34,11 @@ public class Photo {
     this.isOwner = isOwner;
   }
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 
@@ -118,7 +119,7 @@ public class Photo {
   }
 
   public static class Builder {
-    private String id;
+    private UUID id;
 
     private String src;
 
@@ -144,7 +145,7 @@ public class Photo {
       return result;
     }
 
-    public Builder id(String id) {
+    public Builder id(UUID id) {
       this.id = id;
       return this;
     }

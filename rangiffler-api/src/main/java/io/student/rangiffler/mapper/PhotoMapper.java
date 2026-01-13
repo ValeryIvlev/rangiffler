@@ -14,7 +14,7 @@ public class PhotoMapper {
 
     public Photo toDto(PhotoEntity entity) {
         return Photo.newBuilder()
-                .id(entity.getId().toString())
+                .id(entity.getId())
                 .src(
                         "data:image/png;base64," +
                                 Base64.getEncoder().encodeToString(entity.getPhoto())

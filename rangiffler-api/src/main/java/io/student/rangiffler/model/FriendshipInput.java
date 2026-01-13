@@ -1,25 +1,26 @@
 package io.student.rangiffler.model;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class FriendshipInput {
-  private String user;
+  private UUID user;
 
   private FriendshipAction action;
 
   public FriendshipInput() {
   }
 
-  public FriendshipInput(String user, FriendshipAction action) {
+  public FriendshipInput(UUID user, FriendshipAction action) {
     this.user = user;
     this.action = action;
   }
 
-  public String getUser() {
+  public UUID getUser() {
     return user;
   }
 
-  public void setUser(String user) {
+  public void setUser(UUID user) {
     this.user = user;
   }
 
@@ -55,7 +56,7 @@ public class FriendshipInput {
   }
 
   public static class Builder {
-    private String user;
+    private UUID user;
 
     private FriendshipAction action;
 
@@ -66,7 +67,7 @@ public class FriendshipInput {
       return result;
     }
 
-    public Builder user(String user) {
+    public Builder user(UUID user) {
       this.user = user;
       return this;
     }

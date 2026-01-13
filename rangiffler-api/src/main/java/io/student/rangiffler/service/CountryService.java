@@ -25,11 +25,4 @@ public class CountryService {
                 .map(mapper::toDto)
                 .toList();
     }
-
-    public CountryEntity findByCode(String code) {
-        return countryRepository.findByCode(code)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Country not found by code: " + code)
-                );
-    }
 }

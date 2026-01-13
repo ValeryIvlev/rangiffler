@@ -3,6 +3,7 @@ package io.student.rangiffler.controller.mutation;
 import io.student.rangiffler.entity.UserEntity;
 import io.student.rangiffler.model.Photo;
 import io.student.rangiffler.model.PhotoInput;
+import io.student.rangiffler.repository.CountryRepository;
 import io.student.rangiffler.repository.UserRepository;
 import io.student.rangiffler.service.PhotoService;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -32,15 +33,12 @@ public class PhotoMutationController {
 
         String username = principal.getSubject();
 
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseGet(() -> userRepository.save(
-                        UserEntity.builder()
-                                .id(UUID.randomUUID())
-                                .username(username)
-                                .build()
-                ));
+        UUID userId = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Юзер: " + username + " не зарегистрирован"
+                )).getId();
 
-        return photoService.createPhoto(user.getId(), input);
+        return photoService.createPhoto(userId, input);
     }
 
     @MutationMapping
@@ -56,6 +54,6 @@ public class PhotoMutationController {
                                 .username(username)
                                 .build()
                 ));
-        photoService.deletePhoto(user.getId(), id);
+        photoService.deletePhoto(id);
     }
 }

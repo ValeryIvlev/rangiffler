@@ -1,7 +1,5 @@
 package io.student.rangiffler.controller.query;
 
-
-
 import io.student.rangiffler.model.User;
 import io.student.rangiffler.utils.GqlQueryPaginationAndSort;
 import org.springframework.data.domain.*;
@@ -15,6 +13,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @PreAuthorize("isAuthenticated()")
@@ -65,6 +64,7 @@ public class UserQueryController {
     @QueryMapping
     public User user(@AuthenticationPrincipal Jwt principal) {
         return User.newBuilder()
+                .id(UUID.randomUUID())
                 .username(principal.getClaimAsString("sub"))
                 .build();
     }

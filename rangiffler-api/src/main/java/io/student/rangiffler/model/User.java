@@ -3,9 +3,10 @@ package io.student.rangiffler.model;
 import org.springframework.data.domain.Page;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class User {
-  private String id;
+  private UUID id;
 
   private String username;
 
@@ -28,7 +29,7 @@ public class User {
   public User() {
   }
 
-  public User(String id, String username, String firstname, String surname, String avatar,
+  public User(UUID id, String username, String firstname, String surname, String avatar,
               FriendStatus friendStatus, Page<User> friends, Page<User> incomeInvitations,
               Page<User> outcomeInvitations, Country location) {
     this.id = id;
@@ -43,11 +44,11 @@ public class User {
     this.location = location;
   }
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 
@@ -155,7 +156,7 @@ public class User {
   }
 
   public static class Builder {
-    private String id;
+    private UUID id;
 
     private String username;
 
@@ -190,7 +191,7 @@ public class User {
       return result;
     }
 
-    public Builder id(String id) {
+    public Builder id(UUID id) {
       this.id = id;
       return this;
     }

@@ -1,22 +1,23 @@
 package io.student.rangiffler.model;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class LikeInput {
-  private String user;
+  private UUID user;
 
   public LikeInput() {
   }
 
-  public LikeInput(String user) {
+  public LikeInput(UUID user) {
     this.user = user;
   }
 
-  public String getUser() {
+  public UUID getUser() {
     return user;
   }
 
-  public void setUser(String user) {
+  public void setUser(UUID user) {
     this.user = user;
   }
 
@@ -43,7 +44,7 @@ public class LikeInput {
   }
 
   public static class Builder {
-    private String user;
+    private UUID user;
 
     public LikeInput build() {
       LikeInput result = new LikeInput();
@@ -51,7 +52,7 @@ public class LikeInput {
       return result;
     }
 
-    public Builder user(String user) {
+    public Builder user(UUID user) {
       this.user = user;
       return this;
     }

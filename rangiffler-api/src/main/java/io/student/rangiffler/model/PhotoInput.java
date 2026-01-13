@@ -1,9 +1,10 @@
 package io.student.rangiffler.model;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class PhotoInput {
-  private String id;
+  private UUID id;
 
   private String src;
 
@@ -16,7 +17,7 @@ public class PhotoInput {
   public PhotoInput() {
   }
 
-  public PhotoInput(String id, String src, CountryInput country, String description,
+  public PhotoInput(UUID id, String src, CountryInput country, String description,
                     LikeInput like) {
     this.id = id;
     this.src = src;
@@ -25,11 +26,11 @@ public class PhotoInput {
     this.like = like;
   }
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 
@@ -92,7 +93,7 @@ public class PhotoInput {
   }
 
   public static class Builder {
-    private String id;
+    private UUID id;
 
     private String src;
 
@@ -112,7 +113,7 @@ public class PhotoInput {
       return result;
     }
 
-    public Builder id(String id) {
+    public Builder id(UUID id) {
       this.id = id;
       return this;
     }

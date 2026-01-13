@@ -4,6 +4,7 @@ import io.student.rangiffler.entity.PhotoEntity;
 import io.student.rangiffler.mapper.PhotoMapper;
 import io.student.rangiffler.model.Photo;
 import io.student.rangiffler.model.PhotoInput;
+import io.student.rangiffler.repository.CountryRepository;
 import io.student.rangiffler.repository.PhotoRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +16,22 @@ import java.util.UUID;
 public class PhotoService {
 
     private final PhotoRepository photoRepository;
-    private final CountryService countryService;
+    private final CountryRepository countryRepository;
     private final PhotoMapper mapper;
 
-    public PhotoService(PhotoRepository photoRepository,
-                        CountryService countryService,
+    public PhotoService(PhotoRepository photoRepository, CountryRepository countryRepository,
                         PhotoMapper mapper) {
         this.photoRepository = photoRepository;
-        this.countryService = countryService;
+        this.countryRepository = countryRepository;
         this.mapper = mapper;
     }
 
     public Photo createPhoto(UUID userId, PhotoInput input) {
-        UUID countryId = countryService
+        UUID countryId = countryRepository
                 .findByCode(input.getCountry().getCode())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Country not found by code: " + input.getCountry().getCode())
+                )
                 .getId();
 
         PhotoEntity entity = PhotoEntity.builder()
@@ -43,7 +46,7 @@ public class PhotoService {
         return mapper.toDto(saved);
     }
 
-    public void deletePhoto(UUID userId, UUID photoId) {
+    public void deletePhoto(UUID photoId) {
         photoRepository.deleteById(photoId);
     }
 }
