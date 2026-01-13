@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,7 @@ public class RegisterController {
   private static final String MODEL_USERNAME_ATTR = "username";
   private static final String MODEL_REG_FORM_ATTR = "registrationForm";
   private static final String MODEL_FRONT_URI_ATTR = "frontUri";
-  private static final String REG_MODEL_ERROR_BEAN_NAME = "org.springframework.validation.BindingResult.registrationModel";
-
+  private static final String REG_MODEL_ERROR_BEAN_NAME = "org.springframework.validation.BindingResult.registrationForm";
   private final UserService userService;
   private final String frontUri;
 
@@ -56,17 +56,17 @@ public class RegisterController {
       final String registeredUserName;
       try {
         registeredUserName = userService.registerUser(
-            registrationForm.username(),
-            registrationForm.password()
+                registrationForm.username(),
+                registrationForm.password()
         );
         response.setStatus(HttpServletResponse.SC_CREATED);
         model.addAttribute(MODEL_USERNAME_ATTR, registeredUserName);
       } catch (DataIntegrityViolationException e) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         addErrorToRegistrationModel(
-            registrationForm,
-            model,
-            "username", "Username `" + registrationForm.username() + "` already exists"
+                registrationForm,
+                model,
+                "username", "Username `" + registrationForm.username() + "` already exists"
         );
       }
     } else {
