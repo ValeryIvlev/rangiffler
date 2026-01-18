@@ -1,6 +1,7 @@
 package io.student.rangiffler.service;
 
 import io.student.rangiffler.config.Config;
+import io.student.rangiffler.data.entity.Authority;
 import io.student.rangiffler.model.UserJson;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
