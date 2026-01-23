@@ -8,13 +8,13 @@ public enum TxIsolation {
     REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
     SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE);
 
-    private final int jdbcLevel;
+    private final int isolationLevel;
 
-    TxIsolation(int jdbcLevel) {
-        this.jdbcLevel = jdbcLevel;
+    TxIsolation(int isolationLevel) {
+        this.isolationLevel = isolationLevel;
     }
 
-    public int jdbcLevel() {
-        return jdbcLevel;
+    public int isolationLevel() {
+        return isolationLevel;
     }
 }

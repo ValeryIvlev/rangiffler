@@ -6,5 +6,5 @@ import io.student.rangiffler.data.entity.UserEntity;
 import java.util.UUID;
 
 public interface UserDao {
-    UserEntity createUser(UUID userId, String userName, String password);
+    UserEntity createUser(UserEntity user);
 }

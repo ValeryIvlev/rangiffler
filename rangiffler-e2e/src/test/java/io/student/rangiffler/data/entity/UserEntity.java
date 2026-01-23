@@ -3,7 +3,9 @@ package io.student.rangiffler.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,11 +18,12 @@ import static jakarta.persistence.FetchType.EAGER;
 @Getter
 @Setter
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "`user`")
 public class UserEntity implements Serializable {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", nullable = false, columnDefinition = "UUID default gen_random_uuid()")
+  @GeneratedValue
+  @JdbcTypeCode(SqlTypes.BINARY)
+  @Column(nullable = false, columnDefinition = "BINARY(16)")
   private UUID id;
 
   @Column(nullable = false, unique = true)

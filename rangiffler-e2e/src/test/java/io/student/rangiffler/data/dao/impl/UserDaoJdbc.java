@@ -27,30 +27,19 @@ public class UserDaoJdbc implements UserDao {
             """;
 
     @Override
-    public UserEntity createUser(UUID userId, String userName, String password) {
-        String encodedPassword = passwordEncoder.encode(password);
+    public UserEntity createUser(UserEntity userEntity) {
+        String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
         try (PreparedStatement ps = connection.prepareStatement(SQL_CREATE_USER)) {
-            ps.setString(1, userId.toString());
-            ps.setString(2, userName);
+            ps.setString(1, userEntity.getId().toString());
+            ps.setString(2, userEntity.getUsername());
             ps.setString(3, encodedPassword);
-            ps.setBoolean(4, true);
-            ps.setBoolean(5, true);
-            ps.setBoolean(6, true);
-            ps.setBoolean(7, true);
+            ps.setBoolean(4, userEntity.getEnabled());
+            ps.setBoolean(5, userEntity.getAccountNonExpired());
+            ps.setBoolean(6, userEntity.getAccountNonLocked());
+            ps.setBoolean(7, userEntity.getCredentialsNonExpired());
 
             ps.executeUpdate();
-
-            UserEntity user = new UserEntity();
-            user.setId(userId);
-            user.setUsername(userName);
-            user.setPassword(encodedPassword);
-            user.setEnabled(true);
-            user.setAccountNonExpired(true);
-            user.setAccountNonLocked(true);
-            user.setCredentialsNonExpired(true);
-
-            return user;
-
+            return userEntity;
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create user", e);
         }

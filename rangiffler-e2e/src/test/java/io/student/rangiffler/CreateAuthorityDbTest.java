@@ -2,16 +2,14 @@ package io.student.rangiffler;
 
 import com.github.javafaker.Faker;
 import io.student.rangiffler.jupiter.annotation.CloseConnections;
-import io.student.rangiffler.service.AuthorityDbClient;
+import io.student.rangiffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
 
 import static io.student.rangiffler.data.UserData.STANDART_PASSWORD;
 
 @CloseConnections
 public class CreateAuthorityDbTest {
-    AuthorityDbClient authorityDbClient = new AuthorityDbClient();
+    UserDbClient userDbClient = new UserDbClient();
     private final Faker faker = new Faker();
 
     @Test
@@ -22,6 +20,6 @@ public class CreateAuthorityDbTest {
         System.out.println(userName);
         System.out.println("-----------------");
         System.out.println("-----------------");
-        authorityDbClient.createAuthorityUser(UUID.randomUUID(), userName, STANDART_PASSWORD);
+        userDbClient.createUser(userName, STANDART_PASSWORD);
     }
 }
