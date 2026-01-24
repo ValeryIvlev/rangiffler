@@ -23,5 +23,30 @@ public class CreateAuthorityDbTest {
         System.out.println("-----------------");
         System.out.println("-----------------");
         userDbClient.createUser(userName, STANDART_PASSWORD);
+        System.out.println("-----------------");
+        System.out.println("-----------------");
+        userDbClient.deleteUserByUsername(userName);
+    }
+
+    @Test
+    public void txTestSpringJdbc() {
+        String userName = faker.name().username();
+        System.out.println("-----------------");
+        System.out.println("-----------------");
+        System.out.println(userName);
+        System.out.println("-----------------");
+        System.out.println("-----------------");
+        userDbClient.createUserSpringJdbc(userName, STANDART_PASSWORD);
+        System.out.println("-----------------");
+        System.out.println("-----------------");
+        userDbClient.deleteUserByUsernameSpringJdbc(userName);
+    }
+
+    @Test
+    public void findAllTest() {
+        System.out.println(userDbClient.findAllUsers());
+        System.out.println(userDbClient.findAllAuthority());
+        System.out.println(userDbClient.findAllUsersSpringJdbc());
+        System.out.println(userDbClient.findAllAuthoritySpringJdbc());
     }
 }

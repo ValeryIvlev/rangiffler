@@ -3,6 +3,7 @@ package io.student.rangiffler.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.SqlTypes;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "authority")
+@ToString
 public class AuthorityEntity implements Serializable {
   @Id
   @GeneratedValue
