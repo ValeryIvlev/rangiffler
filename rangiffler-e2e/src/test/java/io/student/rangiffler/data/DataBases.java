@@ -26,6 +26,7 @@ public class DataBases {
     private static final Map<String, DataSource> dataSources = new ConcurrentHashMap<>();
     private static final Map<Long, Map<String, Connection>> threadConnections = new ConcurrentHashMap<>();
 
+
     public record XaFunction<T>(Function<Connection, T> function, String jdbcUrl) {}
     public record XaConsumer(Consumer<Connection> function, String jdbcUrl) {}
 
@@ -35,6 +36,7 @@ public class DataBases {
 
             connection = connection(jdbcUrl);
             connection.setAutoCommit(false);
+
             connection.setTransactionIsolation(isolation.isolationLevel());
 
             consumer.accept(connection);
@@ -60,7 +62,9 @@ public class DataBases {
         try {
             connection = connection(jdbcUrl);
             connection.setAutoCommit(false);
+
             connection.setTransactionIsolation(isolation.isolationLevel());
+
 
             T result = function.apply(connection);
 
@@ -89,7 +93,9 @@ public class DataBases {
 
             for (XaFunction<T> action : actions) {
                 var conn = connection(action.jdbcUrl());
+
                 conn.setTransactionIsolation(isolation.isolationLevel());
+
                 result = action.function().apply(conn);
             }
             ut.commit();
@@ -111,7 +117,9 @@ public class DataBases {
 
             for (XaConsumer action : actions) {
                 var conn = connection(action.jdbcUrl());
+
                 conn.setTransactionIsolation(isolation.isolationLevel());
+
                 action.function().accept(conn);
             }
 
@@ -147,7 +155,9 @@ public class DataBases {
                 jdbcUrl,
                 key -> {
                     AtomikosDataSourceBean dsBean = new AtomikosDataSourceBean();
+
                     final String uniqId = StringUtils.substringBetween(jdbcUrl, "3306/", "?");
+
                     dsBean.setUniqueResourceName(uniqId);
                     dsBean.setXaDataSourceClassName("com.mysql.cj.jdbc.MysqlXADataSource");
 

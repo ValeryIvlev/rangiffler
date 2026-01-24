@@ -2,6 +2,7 @@ package io.student.rangiffler;
 
 import com.github.javafaker.Faker;
 import io.student.rangiffler.jupiter.annotation.CloseConnections;
+
 import io.student.rangiffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +10,7 @@ import static io.student.rangiffler.data.UserData.STANDART_PASSWORD;
 
 @CloseConnections
 public class CreateAuthorityDbTest {
+
     UserDbClient userDbClient = new UserDbClient();
     private final Faker faker = new Faker();
 
