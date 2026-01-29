@@ -16,7 +16,7 @@ public class JdbcConnectionHolder implements AutoCloseable {
         this.dataSource = dataSource;
     }
 
-    public Connection connection(){
+    public Connection connection() {
         return threadConnections.computeIfAbsent(
                 Thread.currentThread().threadId(),
                 key -> {

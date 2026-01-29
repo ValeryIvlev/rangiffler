@@ -45,6 +45,11 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public UserEntity createUser(UserEntity userEntity) {
         String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+
+        if (userEntity.getId() == null) {
+            userEntity.setId(UUID.randomUUID());
+        }
+
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(SQL_CREATE_USER)) {
             ps.setString(1, userEntity.getId().toString());
             ps.setString(2, userEntity.getUsername());

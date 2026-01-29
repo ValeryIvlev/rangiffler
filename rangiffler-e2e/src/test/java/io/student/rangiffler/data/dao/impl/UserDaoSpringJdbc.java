@@ -83,6 +83,4 @@ public class UserDaoSpringJdbc implements UserDao {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         return jdbcTemplate.query(FIND_ALL_SQL, UserRowMapper.INSTANCE);
     }
-
-
 }
