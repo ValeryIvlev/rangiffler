@@ -3,34 +3,61 @@ package io.student.rangiffler.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static jakarta.persistence.FetchType.EAGER;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "authority")
-@ToString
-public class AuthorityEntity implements Serializable {
+@Table(name = "`user`")
+public class AuthUserEntity implements Serializable {
   @Id
   @GeneratedValue
   @JdbcTypeCode(SqlTypes.BINARY)
   @Column(nullable = false, columnDefinition = "BINARY(16)")
   private UUID id;
 
-  @Column(nullable = false)
-  @Enumerated(EnumType.STRING)
-  private Authority authority;
+  @Column(nullable = false, unique = true)
+  private String username;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private AuthUserEntity user;
+  @Column(nullable = false)
+  private String password;
+
+  @Column(nullable = false)
+  private Boolean enabled;
+
+  @Column(name = "account_non_expired", nullable = false)
+  private Boolean accountNonExpired;
+
+  @Column(name = "account_non_locked", nullable = false)
+  private Boolean accountNonLocked;
+
+  @Column(name = "credentials_non_expired", nullable = false)
+  private Boolean credentialsNonExpired;
+
+  @OneToMany(fetch = EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+  private List<AuthorityEntity> authorities = new ArrayList<>();
+
+  public void addAuthorities(AuthorityEntity... authorities) {
+    for (AuthorityEntity authority : authorities) {
+      this.authorities.add(authority);
+      authority.setUser(this);
+    }
+  }
+
+  public void removeAuthority(AuthorityEntity authority) {
+    this.authorities.remove(authority);
+    authority.setUser(null);
+  }
 
   @Override
   public final boolean equals(Object o) {
@@ -39,7 +66,7 @@ public class AuthorityEntity implements Serializable {
     Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
     Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
     if (thisEffectiveClass != oEffectiveClass) return false;
-    AuthorityEntity that = (AuthorityEntity) o;
+    AuthUserEntity that = (AuthUserEntity) o;
     return getId() != null && Objects.equals(getId(), that.getId());
   }
 

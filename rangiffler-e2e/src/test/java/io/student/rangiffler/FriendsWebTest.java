@@ -19,7 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class FriendsWebTest {
 
     private static final Config CFG = Config.getInstance();
-    private static final UsersClient userDbClient = new UserDbClient();
+    private static final UserDbClient userDbClient = new UserDbClient();
 
     @AfterEach
     public void afterEach() {

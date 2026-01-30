@@ -1,11 +1,11 @@
 package io.student.rangiffler.jupiter.extension;
 
-import io.student.rangiffler.data.DataBases;
+import io.student.rangiffler.data.tpl.Connections;
 
 public class DatabasesExtension implements SuiteExtension {
 
     @Override
     public void afterSuite() {
-        DataBases.closeAllConnections();
+        Connections.closeAllConnections();
     }
 }
