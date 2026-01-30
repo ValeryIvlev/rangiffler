@@ -1,26 +1,20 @@
 package io.student.rangiffler.data.dao.impl;
 
 import io.student.rangiffler.config.Config;
-import io.student.rangiffler.data.dao.UserDao;
-import io.student.rangiffler.data.entity.UserEntity;
+import io.student.rangiffler.data.dao.AuthUserDao;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 import io.student.rangiffler.data.tpl.DataSources;
 import io.student.rangiffler.mapper.UserRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.UUID;
 
-import static io.student.rangiffler.data.tpl.Connections.holder;
-
-public class UserDaoSpringJdbc implements UserDao {
+public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     private static final Config CFG = Config.getInstance();
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -46,12 +40,12 @@ public class UserDaoSpringJdbc implements UserDao {
                 FROM `rangiffler-auth`.`user`
             """;
     @Override
-    public UserEntity createUser(UserEntity userEntity) {
+    public AuthUserEntity createUser(AuthUserEntity authUserEntity) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
-        String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+        String encodedPassword = passwordEncoder.encode(authUserEntity.getPassword());
 
-        if (userEntity.getId() == null) {
-            userEntity.setId(UUID.randomUUID());
+        if (authUserEntity.getId() == null) {
+            authUserEntity.setId(UUID.randomUUID());
         }
 
         jdbcTemplate.update(con -> {
@@ -59,17 +53,17 @@ public class UserDaoSpringJdbc implements UserDao {
                     SQL_CREATE_USER,
                     Statement.RETURN_GENERATED_KEYS
             );
-            ps.setString(1, userEntity.getId().toString());
-            ps.setString(2, userEntity.getUsername());
+            ps.setString(1, authUserEntity.getId().toString());
+            ps.setString(2, authUserEntity.getUsername());
             ps.setString(3, encodedPassword);
-            ps.setBoolean(4, userEntity.getEnabled());
-            ps.setBoolean(5, userEntity.getAccountNonExpired());
-            ps.setBoolean(6, userEntity.getAccountNonLocked());
-            ps.setBoolean(7, userEntity.getCredentialsNonExpired());
+            ps.setBoolean(4, authUserEntity.getEnabled());
+            ps.setBoolean(5, authUserEntity.getAccountNonExpired());
+            ps.setBoolean(6, authUserEntity.getAccountNonLocked());
+            ps.setBoolean(7, authUserEntity.getCredentialsNonExpired());
             return ps;
         });
 
-        return userEntity;
+        return authUserEntity;
     }
 
     @Override
@@ -79,7 +73,7 @@ public class UserDaoSpringJdbc implements UserDao {
     }
 
     @Override
-    public List<UserEntity> findAll() {
+    public List<AuthUserEntity> findAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         return jdbcTemplate.query(FIND_ALL_SQL, UserRowMapper.INSTANCE);
     }

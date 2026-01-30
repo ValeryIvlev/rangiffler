@@ -2,7 +2,7 @@ package io.student.rangiffler.mapper;
 
 import io.student.rangiffler.data.entity.Authority;
 import io.student.rangiffler.data.entity.AuthorityEntity;
-import io.student.rangiffler.data.entity.UserEntity;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ public class AuthorityRowMapper implements RowMapper<AuthorityEntity> {
         ae.setId(UUID.fromString(rs.getString("id")));
         ae.setAuthority(Authority.valueOf(rs.getString("authority")));
 
-        UserEntity user = new UserEntity();
+        AuthUserEntity user = new AuthUserEntity();
         user.setId(UUID.fromString(rs.getString("user_id")));
         ae.setUser(user);
 

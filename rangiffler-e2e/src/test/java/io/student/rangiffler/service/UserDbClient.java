@@ -2,14 +2,14 @@ package io.student.rangiffler.service;
 
 import io.student.rangiffler.config.Config;
 import io.student.rangiffler.data.dao.AuthorityDao;
-import io.student.rangiffler.data.dao.UserDao;
+import io.student.rangiffler.data.dao.AuthUserDao;
 import io.student.rangiffler.data.dao.impl.AuthorityDaoJdbc;
 import io.student.rangiffler.data.dao.impl.AuthorityDaoSpringJdbc;
-import io.student.rangiffler.data.dao.impl.UserDaoJdbc;
-import io.student.rangiffler.data.dao.impl.UserDaoSpringJdbc;
+import io.student.rangiffler.data.dao.impl.AuthUserDaoJdbc;
+import io.student.rangiffler.data.dao.impl.AuthUserDaoSpringJdbc;
 import io.student.rangiffler.data.entity.Authority;
 import io.student.rangiffler.data.entity.AuthorityEntity;
-import io.student.rangiffler.data.entity.UserEntity;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 import io.student.rangiffler.data.tpl.JdbcTransactionTemplate;
 import io.student.rangiffler.data.tpl.XaTransactionTemplate;
 import io.student.rangiffler.model.UserJson;
@@ -23,10 +23,10 @@ public class UserDbClient {
 
     private static final Config CFG = Config.getInstance();
 
-    private final UserDao userDao = new UserDaoJdbc();
+    private final AuthUserDao userDao = new AuthUserDaoJdbc();
     private final AuthorityDao authorityDao = new AuthorityDaoJdbc();
 
-    private final UserDao userDaoSpringJdbc = new UserDaoSpringJdbc();
+    private final AuthUserDao userDaoSpringJdbc = new AuthUserDaoSpringJdbc();
     private final AuthorityDao authorityDaoSpringJdbc = new AuthorityDaoSpringJdbc();
 
     private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(CFG.authJdbcUrl());
@@ -62,17 +62,17 @@ public class UserDbClient {
     }
 
     public UserJson createUser(String userName, String password) {
-        UserEntity newUser = xaTransactionTemplate.execute(
+        AuthUserEntity newUser = xaTransactionTemplate.execute(
                         ()-> {
-                            UserEntity userEntity = new UserEntity();
-                            userEntity.setId(UUID.randomUUID());
-                            userEntity.setUsername(userName);
-                            userEntity.setPassword(password);
-                            userEntity.setEnabled(true);
-                            userEntity.setAccountNonExpired(true);
-                            userEntity.setAccountNonLocked(true);
-                            userEntity.setCredentialsNonExpired(true);
-                            UserEntity user = userDao.createUser(userEntity);
+                            AuthUserEntity authUserEntity = new AuthUserEntity();
+                            authUserEntity.setId(UUID.randomUUID());
+                            authUserEntity.setUsername(userName);
+                            authUserEntity.setPassword(password);
+                            authUserEntity.setEnabled(true);
+                            authUserEntity.setAccountNonExpired(true);
+                            authUserEntity.setAccountNonLocked(true);
+                            authUserEntity.setCredentialsNonExpired(true);
+                            AuthUserEntity user = userDao.createUser(authUserEntity);
 
                             authorityDao.createAuthority(
                                     Arrays.stream(Authority.values())
@@ -99,17 +99,17 @@ public class UserDbClient {
     }
 
     public UserJson createUserSpringJdbc(String userName, String password) {
-        UserEntity newUser = jdbcTxTemplate.execute(
+        AuthUserEntity newUser = jdbcTxTemplate.execute(
                 ()-> {
-                    UserEntity userEntity = new UserEntity();
-                    userEntity.setId(UUID.randomUUID());
-                    userEntity.setUsername(userName);
-                    userEntity.setPassword(password);
-                    userEntity.setEnabled(true);
-                    userEntity.setAccountNonExpired(true);
-                    userEntity.setAccountNonLocked(true);
-                    userEntity.setCredentialsNonExpired(true);
-                    UserEntity user = userDaoSpringJdbc.createUser(userEntity);
+                    AuthUserEntity authUserEntity = new AuthUserEntity();
+                    authUserEntity.setId(UUID.randomUUID());
+                    authUserEntity.setUsername(userName);
+                    authUserEntity.setPassword(password);
+                    authUserEntity.setEnabled(true);
+                    authUserEntity.setAccountNonExpired(true);
+                    authUserEntity.setAccountNonLocked(true);
+                    authUserEntity.setCredentialsNonExpired(true);
+                    AuthUserEntity user = userDaoSpringJdbc.createUser(authUserEntity);
 
                     authorityDaoSpringJdbc.createAuthority(
                             Arrays.stream(Authority.values())

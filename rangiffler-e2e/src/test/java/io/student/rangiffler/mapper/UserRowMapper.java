@@ -1,13 +1,13 @@
 package io.student.rangiffler.mapper;
 
-import io.student.rangiffler.data.entity.UserEntity;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserRowMapper implements RowMapper<UserEntity> {
+public class UserRowMapper implements RowMapper<AuthUserEntity> {
 
     public static final UserRowMapper INSTANCE = new UserRowMapper();
 
@@ -15,8 +15,8 @@ public class UserRowMapper implements RowMapper<UserEntity> {
     }
 
     @Override
-    public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        UserEntity user = new UserEntity();
+    public AuthUserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        AuthUserEntity user = new AuthUserEntity();
         user.setId(UUID.fromString(rs.getString("id")));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));

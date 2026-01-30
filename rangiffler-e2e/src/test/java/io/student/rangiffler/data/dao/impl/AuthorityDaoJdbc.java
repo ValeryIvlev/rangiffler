@@ -4,9 +4,8 @@ import io.student.rangiffler.config.Config;
 import io.student.rangiffler.data.dao.AuthorityDao;
 import io.student.rangiffler.data.entity.Authority;
 import io.student.rangiffler.data.entity.AuthorityEntity;
-import io.student.rangiffler.data.entity.UserEntity;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,6 +52,7 @@ public class AuthorityDaoJdbc implements AuthorityDao {
                 ps.clearParameters();
             }
             ps.executeBatch();
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create authority", e);
         }
@@ -89,7 +89,7 @@ public class AuthorityDaoJdbc implements AuthorityDao {
         ae.setId(UUID.fromString(rs.getString("id")));
         ae.setAuthority(Authority.valueOf(rs.getString("authority")));
 
-        UserEntity user = new UserEntity();
+        AuthUserEntity user = new AuthUserEntity();
         user.setId(UUID.fromString(rs.getString("user_id")));
         ae.setUser(user);
 

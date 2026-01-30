@@ -1,12 +1,11 @@
 package io.student.rangiffler.data.dao.impl;
 
 import io.student.rangiffler.config.Config;
-import io.student.rangiffler.data.dao.UserDao;
-import io.student.rangiffler.data.entity.UserEntity;
+import io.student.rangiffler.data.dao.AuthUserDao;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +15,7 @@ import java.util.UUID;
 
 import static io.student.rangiffler.data.tpl.Connections.holder;
 
-public class UserDaoJdbc implements UserDao {
+public class AuthUserDaoJdbc implements AuthUserDao {
 
     private static final Config CFG = Config.getInstance();
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -43,24 +42,24 @@ public class UserDaoJdbc implements UserDao {
             """;
 
     @Override
-    public UserEntity createUser(UserEntity userEntity) {
-        String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+    public AuthUserEntity createUser(AuthUserEntity authUserEntity) {
+        String encodedPassword = passwordEncoder.encode(authUserEntity.getPassword());
 
-        if (userEntity.getId() == null) {
-            userEntity.setId(UUID.randomUUID());
+        if (authUserEntity.getId() == null) {
+            authUserEntity.setId(UUID.randomUUID());
         }
 
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(SQL_CREATE_USER)) {
-            ps.setString(1, userEntity.getId().toString());
-            ps.setString(2, userEntity.getUsername());
+            ps.setString(1, authUserEntity.getId().toString());
+            ps.setString(2, authUserEntity.getUsername());
             ps.setString(3, encodedPassword);
-            ps.setBoolean(4, userEntity.getEnabled());
-            ps.setBoolean(5, userEntity.getAccountNonExpired());
-            ps.setBoolean(6, userEntity.getAccountNonLocked());
-            ps.setBoolean(7, userEntity.getCredentialsNonExpired());
+            ps.setBoolean(4, authUserEntity.getEnabled());
+            ps.setBoolean(5, authUserEntity.getAccountNonExpired());
+            ps.setBoolean(6, authUserEntity.getAccountNonLocked());
+            ps.setBoolean(7, authUserEntity.getCredentialsNonExpired());
 
             ps.executeUpdate();
-            return userEntity;
+            return authUserEntity;
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create user", e);
         }
@@ -77,9 +76,9 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Override
-    public List<UserEntity> findAll() {
+    public List<AuthUserEntity> findAll() {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(FIND_ALL_SQL)) {
-            List<UserEntity> users = new ArrayList<>();
+            List<AuthUserEntity> users = new ArrayList<>();
             var rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -92,8 +91,8 @@ public class UserDaoJdbc implements UserDao {
         }
     }
 
-    private UserEntity buildUser(ResultSet rs) throws SQLException {
-        UserEntity user = new UserEntity();
+    private AuthUserEntity buildUser(ResultSet rs) throws SQLException {
+        AuthUserEntity user = new AuthUserEntity();
         user.setId(UUID.fromString(rs.getString("id")));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
