@@ -127,6 +127,16 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
         }
     }
 
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        return Optional.empty();
+    }
+
     private AuthUserEntity buildUser(ResultSet rs) throws SQLException {
         AuthUserEntity user = new AuthUserEntity();
         user.setId(UUID.fromString(rs.getString("user_id")));

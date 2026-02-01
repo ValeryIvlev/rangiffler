@@ -3,6 +3,8 @@ package io.student.rangiffler.data.tpl;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
@@ -19,7 +21,7 @@ public class DataSources {
                 jdbcUrl,
                 key -> {
                     AtomikosDataSourceBean dsBean = new AtomikosDataSourceBean();
-                    final String uniqId = StringUtils.substringBetween(jdbcUrl, "3306/", "?");
+                    final String uniqId = StringUtils.substringAfterLast(jdbcUrl, "/");
                     dsBean.setUniqueResourceName(uniqId);
                     dsBean.setXaDataSourceClassName("com.mysql.cj.jdbc.MysqlXADataSource");
                     Properties props = new Properties();
@@ -29,6 +31,12 @@ public class DataSources {
                     dsBean.setXaProperties(props);
                     dsBean.setPoolSize(3);
                     dsBean.setMaxPoolSize(10);
+                    try {
+                        InitialContext initialContext = new InitialContext();
+                        initialContext.bind("java:comp/env/jdbc/" + uniqId, dsBean);
+                    } catch (NamingException e) {
+                        throw new RuntimeException(e);
+                    }
                     return dsBean;
                 }
         );

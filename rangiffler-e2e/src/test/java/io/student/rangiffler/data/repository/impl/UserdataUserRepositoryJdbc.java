@@ -113,6 +113,11 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
         }
     }
 
+    @Override
+    public Optional<UserEntity> findByUsername(String username) {
+        return Optional.empty();
+    }
+
     private UserEntity buildUser(ResultSet rs) throws SQLException {
         UserEntity user = new UserEntity();
         user.setId(UUID.fromString(rs.getString("id")));
