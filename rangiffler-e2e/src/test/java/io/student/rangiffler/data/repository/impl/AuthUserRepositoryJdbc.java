@@ -50,6 +50,23 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
                 ON a.user_id = u.id
             """;
 
+    private static final String FIND_BY_USERNAME_SQL =
+            """
+            SELECT
+                BIN_TO_UUID(u.id, true)   AS id,
+                u.username,
+                u.password,
+                u.enabled,
+                u.account_non_expired,
+                u.account_non_locked,
+                u.credentials_non_expired,
+                BIN_TO_UUID(a.id, true)   AS authority_id,
+                a.authority
+            FROM `rangiffler-auth`.`user` u
+            JOIN `rangiffler-auth`.`authority` a ON u.id = a.user_id
+            WHERE u.username = ?
+            """;
+
 
     @Override
     public AuthUserEntity createUser(AuthUserEntity authUserEntity) {
@@ -124,6 +141,45 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
             return new ArrayList<>(users.values());
         } catch (SQLException e) {
             throw new RuntimeException("Failed to find all users", e);
+        }
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        try (PreparedStatement ps =
+                     holder(CFG.authJdbcUrl()).connection().prepareStatement(FIND_BY_USERNAME_SQL)) {
+
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            AuthUserEntity user = null;
+
+            while (rs.next()) {
+                if (user == null) {
+                    user = new AuthUserEntity();
+                    user.setId(UUID.fromString(rs.getString("id")));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setEnabled(rs.getBoolean("enabled"));
+                    user.setAccountNonExpired(rs.getBoolean("account_non_expired"));
+                    user.setAccountNonLocked(rs.getBoolean("account_non_locked"));
+                    user.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+                }
+
+                String authorityName = rs.getString("authority");
+                if (authorityName != null) {
+                    AuthorityEntity authority = new AuthorityEntity();
+                    authority.setId(UUID.fromString(rs.getString("authority_id")));
+                    authority.setAuthority(Authority.valueOf(authorityName));
+                    authority.setUser(user);
+                    user.getAuthorities().add(authority);
+                }
+            }
+
+            return Optional.ofNullable(user);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find user by username = " + username, e);
         }
     }
 

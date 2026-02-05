@@ -8,6 +8,7 @@ import io.student.rangiffler.data.entity.UserEntity;
 import io.student.rangiffler.data.repository.AuthUserRepository;
 import io.student.rangiffler.data.repository.UserdataUserRepository;
 import io.student.rangiffler.data.repository.impl.AuthUserRepositoryJdbc;
+import io.student.rangiffler.data.repository.impl.AuthUserRepositorySpringJdbc;
 import io.student.rangiffler.data.repository.impl.UserdataUserRepositoryJdbc;
 import io.student.rangiffler.data.tpl.JdbcTransactionTemplate;
 import io.student.rangiffler.data.tpl.XaTransactionTemplate;
@@ -24,6 +25,7 @@ public class UserDbClientRepository {
     private static final Config CFG = Config.getInstance();
 
     private final AuthUserRepository authUserRepository = new AuthUserRepositoryJdbc();
+    private final AuthUserRepository authUserRepositorySpringJdbc = new AuthUserRepositorySpringJdbc();
     private final UserdataUserRepository userdataUserRepository = new UserdataUserRepositoryJdbc();
 
     private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(CFG.authJdbcUrl());
@@ -98,6 +100,69 @@ public class UserDbClientRepository {
     public UserEntity create(UserEntity user) {
         return jdbcTxApiTemplate.execute(() -> userdataUserRepository.create(user));
     }
+
+    public List<UserJson> findAllUsersSpringJdbc() {
+        return authUserRepositorySpringJdbc.findAll().stream()
+                .map(x -> buildUserJson(x.getId().toString(), x.getUsername()))
+                .toList();
+    }
+
+    public UserJson createUserRepositorySpringJdbc(String userName, String password) {
+        AuthUserEntity newUser = jdbcTxTemplate.execute(() -> {
+            AuthUserEntity authUserEntity = new AuthUserEntity();
+            authUserEntity.setId(UUID.randomUUID());
+            authUserEntity.setUsername(userName);
+            authUserEntity.setPassword(password);
+            authUserEntity.setEnabled(true);
+            authUserEntity.setAccountNonExpired(true);
+            authUserEntity.setAccountNonLocked(true);
+            authUserEntity.setCredentialsNonExpired(true);
+
+            authUserEntity.addAuthorities(
+                    Arrays.stream(Authority.values())
+                            .map(a -> {
+                                AuthorityEntity ae = new AuthorityEntity();
+                                ae.setAuthority(a);
+                                return ae;
+                            })
+                            .toArray(AuthorityEntity[]::new)
+            );
+
+            return authUserRepositorySpringJdbc.createUser(authUserEntity);
+        });
+
+        return buildUserJson(newUser.getId().toString(), newUser.getUsername());
+    }
+
+    public Optional<UserJson> findUserJsonByUsernameSpringJdbc(String username) {
+        return jdbcTxTemplate.execute(() ->
+                authUserRepositorySpringJdbc.findByUsername(username)
+                        .map(u -> buildUserJson(u.getId().toString(), u.getUsername()))
+        );
+    }
+
+    public void deleteUserByUsernameSpringJdbc(String userName) {
+        jdbcTxTemplate.execute(() -> {
+            authUserRepositorySpringJdbc.deleteUserByUserName(userName);
+            return null;
+        });
+    }
+
+    public Optional<UserJson> findUserJsonByUsernameJdbc(String username) {
+        return jdbcTxTemplate.execute(() ->
+                authUserRepository.findByUsername(username)
+                        .map(u -> buildUserJson(u.getId().toString(), u.getUsername()))
+        );
+    }
+
+    public void deleteUserByUsernameJdbc(String userName) {
+        jdbcTxTemplate.execute(() -> {
+            authUserRepository.deleteUserByUserName(userName);
+            return null;
+        });
+    }
+
+
 
     private UserJson buildUserJson(String userId, String userName) {
         return new UserJson(

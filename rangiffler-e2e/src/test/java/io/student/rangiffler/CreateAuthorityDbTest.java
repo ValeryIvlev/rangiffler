@@ -1,14 +1,17 @@
 package io.student.rangiffler;
 
 import com.github.javafaker.Faker;
+import io.student.rangiffler.data.entity.AuthUserEntity;
 import io.student.rangiffler.data.entity.UserEntity;
 import io.student.rangiffler.data.repository.AuthUserRepository;
 import io.student.rangiffler.jupiter.annotation.CloseConnections;
 
+import io.student.rangiffler.model.UserJson;
 import io.student.rangiffler.service.UserDbClient;
 import io.student.rangiffler.service.UserDbClientRepository;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static io.student.rangiffler.data.UserData.STANDART_PASSWORD;
@@ -103,5 +106,31 @@ public class CreateAuthorityDbTest {
         System.out.println("Friendship accepted");
 
 
+    }
+
+    @Test
+    public void createPrintDeleteAuthUserSpringJdbcRepositoryTest() {
+        String userName = faker.name().username() + "_" + System.currentTimeMillis();
+
+        System.out.println("---- CREATE ----");
+        UserJson created = userDbClientRepository.createUserRepositorySpringJdbc(userName, STANDART_PASSWORD);
+        System.out.println("Created: " + created);
+
+        System.out.println("---- FIND ----");
+        Optional<UserJson> foundOpt = userDbClientRepository.findUserJsonByUsernameSpringJdbc(userName);
+        System.out.println("Found: " + foundOpt);
+    }
+
+    @Test
+    public void createPrintDeleteAuthUserJdbcRepositoryTest() {
+        String userName = faker.name().username() + "_" + System.currentTimeMillis();
+
+        System.out.println("---- CREATE ----");
+        UserJson created = userDbClientRepository.createUserRepositoryJdbc(userName, STANDART_PASSWORD);
+        System.out.println("Created: " + created);
+
+        System.out.println("---- FIND ----");
+        Optional<UserJson> foundOpt = userDbClientRepository.findUserJsonByUsernameJdbc(userName);
+        System.out.println("Found: " + foundOpt);
     }
 }
