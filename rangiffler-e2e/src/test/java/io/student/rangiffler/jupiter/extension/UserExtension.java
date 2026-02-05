@@ -13,7 +13,7 @@ import static io.student.rangiffler.data.UserData.STANDART_PASSWORD;
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
-    private final UsersClient usersClient = new UserDbClient();
+    private final UserDbClient usersClient = new UserDbClient();
     private final Faker faker = new Faker();
 
     @Override
