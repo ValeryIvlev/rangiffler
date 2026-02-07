@@ -115,7 +115,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        return Optional.empty();
+        throw new UnsupportedOperationException("Метод не поддерживается");
     }
 
     private UserEntity buildUser(ResultSet rs) throws SQLException {

@@ -35,7 +35,7 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
     public Optional<AuthUserEntity> findByUsername(String username) {
         try {
             return Optional.of(entityManager.createQuery( "select U from AuthUserEntity where u.username = :username", AuthUserEntity.class)
-                    .setParameter("username", username).getSingleResult());
+                    .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -44,11 +44,16 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
 
     @Override
     public void deleteUserByUserName(String userName) {
+        throw new UnsupportedOperationException("Метод не поддерживается");
 
     }
 
     @Override
     public List<AuthUserEntity> findAll() {
-        return List.of();
+        return entityManager.createQuery(
+                        "select u from AuthUserEntity u",
+                        AuthUserEntity.class
+                )
+                .getResultList();
     }
 }

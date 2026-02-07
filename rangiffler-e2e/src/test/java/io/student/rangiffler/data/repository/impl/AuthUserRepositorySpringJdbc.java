@@ -135,7 +135,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
 
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
-        return Optional.empty();
+        throw new UnsupportedOperationException("Метод не поддерживается");
     }
 
     @Override

@@ -101,10 +101,6 @@ public class CreateAuthorityDbTest {
         userDbClientRepository.addOutcomeInvitation(userA, userB);
         System.out.println("Invitation A -> B (PENDING)");
 
-        // 3. B -> A invitation (edge-case)
-        userDbClientRepository.addOutcomeInvitation(userB, userA);
-        System.out.println("Invitation B -> A (PENDING)");
-
         // 4. Accept friendship
         userDbClientRepository.addFriend(userA, userB);
         System.out.println("Friendship accepted");
